@@ -145,6 +145,17 @@ void send_portd()
 	usart_puts("]\n");
 }
 
+void send_adc(uint16_t adcw, uint8_t channel)
+{
+	usart_puts("[adc:");
+	usart_putui_hex((uint8_t)adcw, 2);
+	usart_puts(":");
+	usart_putui_hex((uint8_t)(adcw>>8), 2);
+	usart_puts(":");
+	usart_putui_hex(channel, 2);
+	usart_puts("]\n");
+}
+
 
 //Serielle Schnittstelle initialisieren	// OK
 void usart_init(uint16_t baud) {
