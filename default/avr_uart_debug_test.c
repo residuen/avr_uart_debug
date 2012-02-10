@@ -22,27 +22,50 @@ int main(void)
 	usart_init(9600);	// Initialisieren der seriellen Schnittstelle
 
 	DDRD = 1<<PD6;		// Bit6 PortD als Ausgang festlegen
-
 	DDRC = 0xff;
+	DDRB = 0xff;
+	DDRA = 0xff;
 
 	PORTC = 0;
+	PORTB = 0;
+	PORTA = 1;
+
+	int i = 1;
 
 	while(1)
 	{
-		//send_ddr();
-		send_ports();
-		//send_pins();
 		// sinus();
+		sendDebugMsg();
 
-		blink();				// Signal wechseln	
+		blink();	// Blinklicht fuer Bit 6 auf PORTD
+		PORTC++;	// Vorwaertzaehler PORTC
+		PORTB--;	// Rueckwaertszaehler PORTB
+		PORTA = (i==1) ? PORTA*2 : PORTA/2;	// Lauflicht auf PORTA
 
-		PORTC ++;
+		if(PORTA & 1<<PA7)
+			i = 0;
+		else
+			if(PORTA & 1)
+				i = 1;
 
+	
 		_delay_ms(1000);		// Wartezeit bis zum naechsten Senden
 	}
 	
 	return 0;
 
+}
+
+void sendDebugMsg()
+{
+	//send_ddr();
+	//send_ports();
+	send_porta();
+	send_portb();
+	send_portc();
+	send_portd();
+	//send_pins();
+	
 }
 
 void sinus()
