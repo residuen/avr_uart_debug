@@ -7,6 +7,8 @@ double x=0;		// Variablen
 
 double pi_ =  M_PI / 25.0;
 
+uint8_t segmente[] = { 0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F };
+
 void ADC_Init(void);
 uint16_t ADC_Read(uint8_t channel);
 
@@ -32,6 +34,8 @@ int main(void)
 	PORTB = 1;
 
 	int i = 1;
+	int j = 0;
+	int k = 0;
 
 	// uint16_t = adcValue;
 
@@ -42,15 +46,30 @@ int main(void)
 
 		blink();	// Blinklicht fuer Bit 6 auf PORTD
 
-		PORTC++;	// Vorwaertzaehler PORTC
-		PORTB = (i==1) ? PORTB*2 : PORTB/2;	// Lauflicht auf PORTA
+		PORTC = segmente[j];	// Vorwaertzaehler PORTC
+		
+		if(k >= (ADC_Read(0) / 100))
+		{
+			k=0;
+			j++;
+		}
+		
+		k++;
+
+	//	if(k==10)
+	//		j++;
+
+		if(j>9)
+			j=0;
+
+
+		PORTB = (i==1) ? PORTB*2 : PORTB/2;	// Lauflicht auf PORTB
 
 		if(PORTB & 1<<PB7)
 			i = 0;
 		else
 			if(PORTB & 1)
 				i = 1;
-
 	
 		_delay_ms(100);		// Wartezeit bis zum naechsten Senden
 	}
