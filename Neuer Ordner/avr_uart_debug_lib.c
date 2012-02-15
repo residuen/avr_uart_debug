@@ -3,12 +3,166 @@
 #include <avr/io.h>
 #include <stdlib.h>
 
+// Sende Inhalt aller Datenrichtigungsregister
+void send_ddr()
+{
+	usart_puts("[ddr:");
+	usart_putui_hex(DDRA, 2);
+	usart_puts(":");
+	usart_putui_hex(DDRB, 2);
+	usart_puts(":");
+	usart_putui_hex(DDRC, 2);
+	usart_puts(":");
+	usart_putui_hex(DDRD, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von DDRA
+void send_ddra()
+{
+	usart_puts("[ddra:");
+	usart_putui_hex(DDRA, 2);
+	usart_puts("]\n");
+}
+
+
+// Sende Inhalt von DDRB
+void send_ddrb()
+{
+	usart_puts("[ddrb:");
+	usart_putui_hex(DDRB, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von DDRC
+void send_ddrc()
+{
+	usart_puts("[ddrc:");
+	usart_putui_hex(DDRC, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von DDRD
+void send_ddrd()
+{
+	usart_puts("[ddrd:");
+	usart_putui_hex(DDRD, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt aller Eingangsadressen
+void send_pins()
+{
+	usart_puts("[pin:");
+	usart_putui_hex(PINA, 2);
+	usart_puts(":");
+	usart_putui_hex(PINB, 2);
+	usart_puts(":");
+	usart_putui_hex(PINC, 2);
+	usart_puts(":");
+	usart_putui_hex(PIND, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von PINA
+void send_pina()
+{
+	usart_puts("[pina:");
+	usart_putui_hex(PINA, 2);
+	usart_puts("]\n");
+}
+
+
+// Sende Inhalt von PINB
+void send_pinb()
+{
+	usart_puts("[pinb:");
+	usart_putui_hex(PINB, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von PINC
+void send_pinc()
+{
+	usart_puts("[pinc:");
+	usart_putui_hex(PINC, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von PIND
+void send_pind()
+{
+	usart_puts("[pind:");
+	usart_putui_hex(PIND, 2);
+	usart_puts("]\n");
+}
+
+// Inhalt aller Datenregister (PORT) senden
+// Sende Inhalt aller Eingangsadressen
+void send_ports()
+{
+	usart_puts("[port:");
+	usart_putui_hex(PORTA, 2);
+	usart_puts(":");
+	usart_putui_hex(PORTB, 2);
+	usart_puts(":");
+	usart_putui_hex(PORTC, 2);
+	usart_puts(":");
+	usart_putui_hex(PORTD, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von PORTA
+void send_porta()
+{
+	usart_puts("[porta:");
+	usart_putui_hex(PORTA, 2);
+	usart_puts("]\n");
+}
+
+
+// Sende Inhalt von PORTB
+void send_portb()
+{
+	usart_puts("[portb:");
+	usart_putui_hex(PORTB, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von PORTC
+void send_portc()
+{
+	usart_puts("[portc:");
+	usart_putui_hex(PORTC, 2);
+	usart_puts("]\n");
+}
+
+// Sende Inhalt von PORTD
+void send_portd()
+{
+	usart_puts("[portd:");
+	usart_putui_hex(PORTD, 2);
+	usart_puts("]\n");
+}
+
+void send_adc(uint16_t adcw, uint8_t channel)
+{
+	usart_puts("[adc:");
+	usart_putui_hex((uint8_t)adcw, 2);
+	usart_puts(":");
+	usart_putui_hex((uint8_t)(adcw>>8), 2);
+	usart_puts(":");
+	usart_putui_hex(channel, 2);
+	usart_puts("]\n");
+}
+
+
 //Serielle Schnittstelle initialisieren	// OK
 void usart_init(uint16_t baud) {
 
-//	const uint32_t freq_osz=1000000L;	//Taktfrequenz 8MHz
-	const uint32_t freq_osz=8000000L;	//Taktfrequenz 8MHz
-//	const uint32_t freq_osz=´16000000L;	//Taktfrequenz 16MHz
+//	const uint32_t freq_osz=1000000L;	//Taktfrequenz 1MHz
+//	const uint32_t freq_osz=8000000L;	//Taktfrequenz 8MHz
+	const uint32_t freq_osz=16000000L;	//Taktfrequenz 16MHz
 
 	uint16_t baud_rate;
 
@@ -58,31 +212,31 @@ void usart_gets(char *s) {
 
 // --- Funktionen zum Senden von Daten ---
 
+// Senden eines einzelnen Bytes	// OK
 void usart_putc(uint8_t byte) {
 
-	//Ein Byte senden
-	while(!(UCSRA&(1<<UDRE)));//warten auf Datenregister empty
+	while(!(UCSRA&(1<<UDRE)));	// warten, bis Datenregister leer ist
 	UDR=byte;
 }
-//--------------------------------------------------------------
+
+// Senden einer Zeichenkette (String)	// OK
 void usart_puts(char *s) {
 
-	//Einen String mit Endmarke 0 senden
+	// Auslesen und senden der Zeichenkette
     while (*s!=0) {
         usart_putc(*s);
 		s++;
     }
-    usart_putc(0); //Endmarke 0 übertragen!
+    usart_putc(0);	// Uebertragen der Endmarke 0
 }
-//---------------------------------------------------------------
+
+// Eine Integer-Zahl als Zeichenkette senden, mit festgel. Stellenzahl
 void usart_puti(int zahl, int sges) {
 
-	//Senden der Integerzahl zahl formatiert  mit sges Stellen 
-	//als Zeichenkette
 	char buffer[16];
 	uint8_t l=0,n;
 	char *z=buffer;
-	itoa(zahl,buffer,10);//Integer to String (ASCII)
+	itoa(zahl,buffer,10);	// Umwandeln von Integer nach  String (als ASCII)
 
 	while(*z!=0) //Stellenbedarf l für zahl
 	{
@@ -167,7 +321,7 @@ void usart_putui_hex(unsigned int zahl, int sges) {
 	}
 
 	for(n=l;n<sges;n++)
-		 usart_putc(' '); 
+		 usart_putc('0');	// usart_putc(' '); // 0 anstelle von Leerstelle senden
 		
 	usart_puts(buffer);
 }
