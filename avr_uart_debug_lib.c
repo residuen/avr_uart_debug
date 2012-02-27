@@ -156,9 +156,23 @@ void send_adc(uint16_t adcw, uint8_t channel)
 	usart_puts("]\n");
 }
 
+void send_all()	// Sende alle Ports und alle ADC-Kanaele
+{
+	int i;
+
+	send_porta();
+	send_portb();
+	send_portc();
+	send_portd();
+	
+	for(i=0; i<=7; i++)
+		send_adc(ADC_Read(i), i);
+
+}
+
 
 //Serielle Schnittstelle initialisieren	// OK
-void usart_init(uint16_t baud) {
+void init_visu(uint16_t baud) {
 
 //	const uint32_t freq_osz=1000000L;	//Taktfrequenz 1MHz
 //	const uint32_t freq_osz=8000000L;	//Taktfrequenz 8MHz

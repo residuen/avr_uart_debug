@@ -25,8 +25,10 @@ void send_portd();	// PORTD senden
 
 void send_adc(uint16_t adcw, uint8_t channel);	// Inhalt des ADC (ADCL, ADCH & Kanal senden
 
+void send_all();	// Sende alle Ports und den ADC
+
 // UART-Funktionen
-void usart_init(uint16_t baud);
+void init_visu(uint16_t baud);
 uint8_t usart_byte_avail(void);
 uint8_t usart_getc(void);
 void usart_gets(char *s);
